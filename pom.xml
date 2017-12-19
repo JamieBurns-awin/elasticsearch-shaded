@@ -7,35 +7,35 @@
     <groupId>org.elasticsearch.shaded</groupId>
     <artifactId>elasticsearch-shaded</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>6.1.1-SNAPSHOT</version>
 
     <properties>
-        <elasticsearch.version>2.4.1</elasticsearch.version>
+        <elasticsearch.version>6.1.1</elasticsearch.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
     <dependencies>
+
        <dependency>
            <groupId>org.elasticsearch</groupId>
            <artifactId>elasticsearch</artifactId>
            <version>${elasticsearch.version}</version>
        </dependency>
-    </dependencies>
 
-    <repositories>
-       <repository>
-           <id>elasticsearch-releases</id>
-           <url>http://maven.elasticsearch.org/releases</url>
-           <releases>
-               <enabled>true</enabled>
-               <updatePolicy>daily</updatePolicy>
-           </releases>
-           <snapshots>
-               <enabled>false</enabled>
-           </snapshots>
-       </repository>
-    </repositories>
+       <dependency>
+           <groupId>org.elasticsearch.client</groupId>
+           <artifactId>elasticsearch-rest-high-level-client</artifactId>
+           <version>${elasticsearch.version}</version>
+       </dependency>
+
+       <dependency>
+           <groupId>org.elasticsearch.client</groupId>
+           <artifactId>transport</artifactId>
+           <version>${elasticsearch.version}</version>
+       </dependency>
+
+    </dependencies>
 
     <build>
        <plugins>
@@ -45,39 +45,76 @@
            <version>2.4.3</version>
            <executions>
              <execution>
+
                <phase>package</phase>
                <goals>
                  <goal>shade</goal>
                </goals>
+
                <configuration>
+
                  <relocations>
 
                     <relocation>
                         <pattern>org.apache.commons.cli</pattern>
                         <shadedPattern>org.elasticsearch.shaded.org.apache.commons.cli</shadedPattern>
                     </relocation>
+
+                    <relocation>
+                        <pattern>org.apache.http</pattern>
+                        <shadedPattern>org.elasticsearch.shaded.org.apache.http</shadedPattern>
+                    </relocation>
+
+                    <relocation>
+                        <pattern>org.apache.httpcomponents</pattern>
+                        <shadedPattern>org.elasticsearch.shaded.org.apache.httpcomponents</shadedPattern>
+                    </relocation>
+
+                    <relocation>
+                        <pattern>org.apache.logging.log4j</pattern>
+                        <shadedPattern>org.elasticsearch.shaded.org.apache.logging.log4j</shadedPattern>
+                    </relocation>
+
                     <relocation>
                         <pattern>com.fasterxml</pattern>
                         <shadedPattern>org.elasticsearch.shaded.com.fasterxml</shadedPattern>
                     </relocation>
+
                     <relocation>
                         <pattern>com.google.common</pattern>
                         <shadedPattern>org.elasticsearch.shaded.com.google.common</shadedPattern>
                     </relocation>
+
                     <relocation>
                         <pattern>com.google.thirdparty</pattern>
                         <shadedPattern>org.elasticsearch.shaded.com.google.thirdparty</shadedPattern>
                     </relocation>
+
                     <relocation>
                         <pattern>org.jboss.netty</pattern>
                         <shadedPattern>org.elasticsearch.shaded.org.jboss.netty</shadedPattern>
                     </relocation>
 
+                    <relocation>
+                        <pattern>io.netty</pattern>
+                        <shadedPattern>org.elasticsearch.shaded.io.netty</shadedPattern>
+                    </relocation>
+
                  </relocations>
-                 <transformers>
-                   <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer" />
-                   <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                 </transformers>
+
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/**</exclude>
+                                <exclude>LICENSE</exclude>
+                                <exclude>NOTICE</exclude>
+                                <exclude>/*.txt</exclude>
+                                <exclude>build.properties</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+
                </configuration>
              </execution>
            </executions>
